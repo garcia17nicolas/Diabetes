@@ -25,6 +25,7 @@ def tipoCursos(tipo: str):
 @app.post("/asignatura")
 def asignatura(data: dataTest):
     data = data.model_dump()
+    print(data)
 
     return {"asiganatura":data}
 

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Predicción de Diabetes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .success {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h1>Predicción de Diabetes</h1>
+    <form id="diabetesForm">
+        <label for="Pregnancies">Pregnancies:</label>
+        <input type="number" id="Pregnancies" name="Pregnancies" placeholder="Ingresa el número de embarazos" required>
+
+        <label for="Glucose">Glucose:</label>
+        <input type="number" id="Glucose" name="Glucose" placeholder="Ingresa el nivel de glucosa" required>
+
+        <label for="Bloodpressure">Blood Pressure:</label>
+        <input type="number" id="Bloodpressure" name="Bloodpressure" placeholder="Ingresa la presión arterial" required>
+
+        <label for="Skinthinkness">Skin Thickness:</label>
+        <input type="number" id="Skinthinkness" name="Skinthinkness" placeholder="Ingresa el grosor de la piel" required>
+
+        <label for="Insuline">Insulin:</label>
+        <input type="number" id="Insuline" name="Insuline" placeholder="Ingresa los niveles de insulina" required>
+
+        <label for="BMI">BMI:</label>
+        <input type="number" step="0.1" id="BMI" name="BMI" placeholder="Ingresa el índice de masa corporal" required>
+
+        <label for="DiabetesPedigreeFuntion">Diabetes Pedigree Function:</label>
+        <input type="number" step="0.01" id="DiabetesPedigreeFuntion" name="DiabetesPedigreeFuntion" placeholder="Ingresa la función del pedigrí de diabetes" required>
+
+        <label for="Age">Age:</label>
+        <input type="number" id="Age" name="Age" placeholder="Ingresa la edad" required>
+
+        <button type="submit">Predecir Diabetes</button>
+    </form>
+
+    <div class="result" id="result"></div>
+</div>
+
+<script>
+    // Función que maneja la solicitud del formulario y muestra el resultado
+    document.getElementById('diabetesForm').addEventListener('submit', async function (event) {
+        event.preventDefault(); // Evita el comportamiento predeterminado del formulario (recargar la página)
+
+        // Obtener los datos del formulario
+        const formData = new FormData(this);
+
+        // Crear un objeto con los datos del formulario
+        const data = {};
+        formData.forEach((value, key) => {
+            data[key] = value;
+        });
+
+        try {
+            // Hacer la solicitud POST al servidor
+            const response = await fetch('https://diabetes-pdko.onrender.com/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            // Verificar si la respuesta es exitosa
+            if (response.ok) {
+                const result = await response.json();
+                document.getElementById('result').innerHTML = `Resultado: ${result.prediction ? 'Diabético' : 'No diabético'}`;
+                document.getElementById('result').classList.add('success');
+                document.getElementById('result').classList.remove('error');
+            } else {
+                throw new Error('Error al obtener los resultados');
+            }
+        } catch (error) {
+            // Mostrar error en caso de fallo
+            document.getElementById('result').innerHTML = `Error: ${error.message}`;
+            document.getElementById('result').classList.add('error');
+            document.getElementById('result').classList.remove('success');
+        }
+    });
+</script>
+
+</body>
+</html>
+
